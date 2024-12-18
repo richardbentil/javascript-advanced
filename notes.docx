@@ -1,0 +1,251 @@
+Great! Now that we've covered the basic JavaScript concepts and built the **To-Do List App**, let’s move on to the **Advanced JavaScript** topics and build the **Weather App** project.
+
+---
+
+### **Advanced JavaScript**
+
+Now we will cover more advanced topics in JavaScript. These concepts will help you work with more complex applications, including interacting with external APIs and handling asynchronous code.
+
+---
+
+### **1. Intermediate Functions**
+
+#### **Arrow Functions**
+Arrow functions are a shorter way of writing functions in JavaScript. They are more concise and do not have their own `this` context.
+
+```javascript
+const greet = (name) => {
+  console.log("Hello, " + name);
+};
+greet("John");  // Outputs: Hello, John
+```
+
+#### **Callback Functions**
+A callback function is a function passed as an argument to another function. This is commonly used in asynchronous operations.
+
+```javascript
+function fetchData(callback) {
+  let data = "Fetched Data";
+  callback(data);  // Calling the callback with data
+}
+
+fetchData((data) => {
+  console.log(data);  // Outputs: Fetched Data
+});
+```
+
+#### **Closures**
+A closure occurs when a function retains access to its lexical scope even after the outer function has finished execution. This is useful for private variables and data encapsulation.
+
+```javascript
+function outerFunction() {
+  let counter = 0;
+  
+  return function innerFunction() {
+    counter++;
+    console.log(counter);
+  };
+}
+
+const counter = outerFunction();
+counter();  // Outputs: 1
+counter();  // Outputs: 2
+```
+
+---
+
+### **2. Objects and Arrays**
+
+#### **Objects**
+An object is a collection of key-value pairs.
+
+```javascript
+let person = {
+  name: "John",
+  age: 25,
+  greet: function() {
+    console.log("Hello, " + this.name);
+  }
+};
+
+person.greet();  // Outputs: Hello, John
+```
+
+#### **Arrays**
+Arrays are ordered collections of values. You can iterate over them using loops or array methods like `forEach`, `map`, `filter`, and `reduce`.
+
+```javascript
+let fruits = ["apple", "banana", "cherry"];
+fruits.forEach((fruit) => {
+  console.log(fruit);  // Outputs each fruit
+});
+```
+
+---
+
+### **3. Asynchronous JavaScript**
+
+#### **Promises**
+Promises represent the eventual completion (or failure) of an asynchronous operation. You can handle them using `.then()` and `.catch()` methods.
+
+```javascript
+let fetchData = new Promise((resolve, reject) => {
+  let success = true;
+  if (success) {
+    resolve("Data fetched successfully");
+  } else {
+    reject("Failed to fetch data");
+  }
+});
+
+fetchData
+  .then((result) => console.log(result))  // Outputs: Data fetched successfully
+  .catch((error) => console.log(error));  // Handles errors
+```
+
+#### **Async/Await**
+`async/await` is a more readable way to work with promises. An `async` function always returns a promise, and `await` pauses the execution until the promise resolves.
+
+```javascript
+async function getData() {
+  let data = await fetch("https://api.example.com");
+  let json = await data.json();
+  console.log(json);
+}
+
+getData();
+```
+
+---
+
+### **4. Error Handling**
+
+#### **Try, Catch, Finally**
+To handle errors gracefully, use `try`, `catch`, and `finally` blocks.
+
+```javascript
+try {
+  let x = 10 / 0;
+  console.log(x);
+} catch (error) {
+  console.error("An error occurred:", error);
+} finally {
+  console.log("This will always run");
+}
+```
+
+---
+
+### **5. Advanced DOM Manipulation**
+
+#### **Event Listeners**
+Event listeners allow you to respond to user interactions with the page (clicks, input changes, etc.).
+
+```javascript
+let button = document.getElementById("myButton");
+button.addEventListener("click", () => {
+  alert("Button clicked");
+});
+```
+
+#### **Creating and Removing Elements**
+You can create and remove elements dynamically from the DOM.
+
+```javascript
+let newElement = document.createElement("div");
+newElement.textContent = "New Element";
+document.body.appendChild(newElement);
+
+newElement.remove();  // Removes the element from the DOM
+```
+
+---
+
+### **Building the Weather App**
+
+Let’s build the **Weather App** where we’ll use the `fetch()` function to get weather data from an external API (OpenWeatherMap), and display it to the user. This will help you practice working with asynchronous JavaScript and DOM manipulation.
+
+**Step 1: HTML Structure**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+</head>
+<body>
+  <h1>Weather App</h1>
+  <input type="text" id="cityInput" placeholder="Enter city name">
+  <button id="searchButton">Get Weather</button>
+  <div id="weatherInfo"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+```
+
+**Step 2: JavaScript to Fetch Weather Data**
+
+In `app.js`, we will add the functionality to fetch weather data using the `fetch()` API and display it on the webpage.
+
+```javascript
+const searchButton = document.getElementById("searchButton");
+const cityInput = document.getElementById("cityInput");
+const weatherInfo = document.getElementById("weatherInfo");
+
+searchButton.addEventListener("click", function() {
+  let city = cityInput.value;
+  if (city === "") {
+    weatherInfo.innerHTML = "Please enter a city.";
+    return;
+  }
+
+  fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=YOUR_API_KEY`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.cod === "404") {
+        weatherInfo.innerHTML = "City not found!";
+      } else {
+        weatherInfo.innerHTML = `
+          <h2>Weather in ${data.name}</h2>
+          <p>Temperature: ${Math.round(data.main.temp - 273.15)}°C</p>
+          <p>Weather: ${data.weather[0].description}</p>
+          <p>Humidity: ${data.main.humidity}%</p>
+        `;
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching weather data:", error);
+      weatherInfo.innerHTML = "Error fetching data.";
+    });
+});
+```
+
+**Step 3: Explanation**
+
+- **HTML**: We created an input field for the user to enter a city, a button to trigger the search, and a `div` to display the weather information.
+- **JavaScript**: 
+  - We set up an event listener on the button.
+  - When clicked, it fetches data from the OpenWeatherMap API using the city name entered.
+  - If successful, the weather data is displayed in the `weatherInfo` element. If there’s an error (e.g., the city is not found), an appropriate message is shown.
+
+---
+
+### **Summary of Concepts Covered in the Weather App**
+
+- **Asynchronous JavaScript**: We used `fetch()` to make HTTP requests asynchronously and handled the response with `.then()` and `.catch()`.
+- **DOM Manipulation**: Dynamically updated the page with weather information based on user input.
+- **Error Handling**: Used `catch` to handle errors in the asynchronous request.
+- **API Integration**: Practiced working with external APIs to fetch live data.
+
+---
+
+### **Notes for Revising**
+
+- **Promises and `fetch()`**: Make sure to understand how promises work in JavaScript. `fetch()` returns a promise that resolves with the response of the request.
+- **Async/Await**: Try converting the promise-based `fetch()` code to use `async` and `await` for better readability.
+- **Error Handling**: Always use `.catch()` or `try/catch` blocks to handle errors in asynchronous code.
+
+Would you like to move on to the **next project**, or do you have any questions about the **Weather App**?
